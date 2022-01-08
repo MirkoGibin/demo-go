@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
-	"os"
 	"strconv"
 
 	"github.com/gocolly/colly"
@@ -56,9 +56,19 @@ func main() {
 	// I want to tell the scraper where to start
 	collector.Visit("https://www.factretriever.com/rhino-facts")
 
-	// I want to write the collector results in json. I need an encoder
-	enc := json.NewEncoder(os.Stdout)
-	enc.SetIndent("", " ")
-	enc.Encode(allFacts)
+	writeJSON(allFacts)
+
+}
+
+func writeJSON(data []Fact) {
+	file, err := json.MarshalIndent(data, "", " ")
+	if err != nil {
+		log.Println("Cannot create file")
+		return
+	}
+
+	// Undescore (blank identifier) must be used if I don't need the return value of a function
+
+	_ = ioutil.WriteFile("rhinofacts.json", file, 0644) // the file must be created, 0644 is the permission code to use
 
 }
